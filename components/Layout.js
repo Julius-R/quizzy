@@ -10,7 +10,8 @@ export default function Layout({ children, title }) {
 					content="A quiz app I built with Next.js"
 				/>
 			</Head>
-			{children}
+			<header className="branding txt-dark-black tx-lg">Quizzy</header>
+			<main className="main">{children}</main>
 		</div>
 	);
 }
