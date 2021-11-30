@@ -8,6 +8,8 @@ Code 2: Invalid Parameter Contains an invalid parameter. Arguments passed in are
 
 /* 
 State:
+    - Session-ID (uuid gen, designed to prevent access to question and result pages, generate once quiz is started)
+    
     - Questions
         - Question
             - id
