@@ -1,18 +1,29 @@
+@mixin font_color($color)
+    color: $color
+
+@mixin font_size($size)
+    font-size: $size
+
+@mixin border_color($color)
+    border-color: $color
+    
 .txt-dark-black
-    color: $dark-black
+    @include font_color($dark-black)
 .txt-lite-black
-    color: $lite-black
+    @include font_color($lite-black)
+
 .border-black
-    border-color: $lite-black
+    @include border_color($lite-black)
 .border-wrong
-    border-color: $red
+    @include border_color($red)
 .border-correct
-    border-color: $green
+    @include border_color($green)
 
 .tx-md
-    font-size: 1.6rem
+    @include font_size(1.6rem)
 .tx-lg
-    font-size: 2.25rem
+    @include font_size(2.25rem)    
 
 .tx-center
     text-align: center
+
