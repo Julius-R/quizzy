@@ -6,12 +6,13 @@ Code 1: No Results Could not return results. The API doesn't have enough questio
 Code 2: Invalid Parameter Contains an invalid parameter. Arguments passed in aren't valid. (Ex. Amount = Five)
 */
 
+// api = `https://opentdb.com/api.php?amount=10&category=${category}&difficulty=${difficulty}&type=${type}` 
 /* 
 State:
     - Session-ID (uuid gen, designed to prevent access to question and result pages, generate once quiz is started)
     
-    - Questions
-        - Question
+    - Questions[]
+        - Question {}
             - id
             - question
             - correct_answer
