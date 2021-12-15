@@ -11,6 +11,8 @@
     @include font_color($dark-black)
 .txt-lite-black
     @include font_color($lite-black)
+.txt-purple
+    @include font_color($purple)
 
 .border-black
     @include border_color($lite-black)
@@ -19,11 +21,28 @@
 .border-correct
     @include border_color($green)
 
-.tx-md
+.txt-sm
+    @include font_size(1.25rem)
+.txt-md
     @include font_size(1.6rem)
-.tx-lg
+.txt-lg
     @include font_size(2.25rem)    
 
-.tx-center
+.txt-center
     text-align: center
 
+.sm-btm
+    margin-bottom: 1rem
+
+.md-btm
+    margin-bottom: 2rem
+
+.full
+    width: 100%
+
+.purp-bg
+    background: $purple
+    color: #fff
+    border-radius: 5px
+    font-size: 1rem
+    padding: .7rem

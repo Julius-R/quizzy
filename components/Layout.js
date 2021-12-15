@@ -1,16 +1,18 @@
 import Head from "next/head";
 
-export default function Layout({ children, title }) {
+export default function Layout({ children }) {
 	return (
 		<div>
 			<Head>
-				<title>{title}</title>
+				<title>Quizzy | A quiz app by Julius R.</title>
 				<meta
 					name="description"
 					content="A quiz app I built with Next.js"
 				/>
 			</Head>
-			<header className="branding txt-dark-black tx-lg">Quizzy</header>
+			<header className="branding">
+				<p className="txt-purple txt-lg">Quizzy</p>
+			</header>
 			<main className="main">{children}</main>
 		</div>
 	);

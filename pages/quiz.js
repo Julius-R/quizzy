@@ -1,3 +1,27 @@
+import Layout from "../components/Layout";
+import React from "react";
+import { useSelector } from "react-redux";
+
+export default function quiz() {
+	const quiz = useSelector((state) => state.quiz);
+	return <Layout>{console.log(quiz)}</Layout>;
+}
+
+export async function getServerSideProps(ctx) {
+	if (ctx.query.id === undefined) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false
+			}
+		};
+	}
+	return { props: {} };
+
+	// Pass data to the page via props
+	// return { props: { data } };
+}
+
 /*
 import Layout from "../components/Layout";
 import React from "react";
