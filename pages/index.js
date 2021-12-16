@@ -46,7 +46,10 @@ export default function Home() {
 					selectedAnswer: null,
 					currentQuestion: question.question,
 					correctAnswer: question.correct_answer,
-					answers: [...question.incorrect_answers]
+					answers: [
+						...question.incorrect_answers,
+						question.correct_answer
+					]
 				};
 				q.answers.sort(() => Math.random() - 0.5);
 				curatedList.push(q);

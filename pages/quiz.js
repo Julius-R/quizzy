@@ -1,54 +1,28 @@
 import Layout from "../components/Layout";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { updateSelectedAnswer, addWrong } from "../store/reducers";
+import { Steps, Button, ButtonGroup } from "rsuite";
 
 export default function quiz() {
-	const quiz = useSelector((state) => state.quiz);
-	return <Layout>{console.log(quiz)}</Layout>;
-}
+	const [questions, setQuestions] = React.useState(
+		useSelector((state) => state.quiz.questions)
+	);
 
-export async function getServerSideProps(ctx) {
-	if (ctx.query.id === undefined) {
-		return {
-			redirect: {
-				destination: "/",
-				permanent: false
-			}
-		};
-	}
-	return { props: {} };
+	// Finish the logic for submitting the quiz
+	const submitQuiz = () => {};
 
-	// Pass data to the page via props
-	// return { props: { data } };
-}
-
-/*
-import Layout from "../components/Layout";
-import React from "react";
-import { Steps, Panel, Paragraph, Button, ButtonGroup } from "rsuite";
-
-export default function Home() {
+	const [currentQuestion, setCurrentQuestion] = React.useState(questions[0]);
 	const [step, setStep] = React.useState(0);
 	const onChange = (nextStep) => {
+		setCurrentQuestion(questions[nextStep]);
 		setStep(nextStep < 0 ? 0 : nextStep > 9 ? 0 : nextStep);
 	};
-	const [name, setName] = React.useState("");
 	const onNext = () => onChange(step + 1);
-	const onPrevious = () => onChange(step - 1);
 
-	const activeComponent = [
-		<Rap setName={setName} name={name} key={0} />,
-		<HipHop setName={setName} name={name} key={1} />,
-		<RnB key={2} />,
-		<Jazz key={3} />
-	]
-	
 	return (
-		<Layout title="Quizzy | A quiz app by Julius R.">
-			<section className="home-view">
-				<h1 className="txt-dark-black tx-lg tx-center">
-					Welcome to Quizzy, {name}!
-				</h1>
+		<Layout>
+			<section className="quiz-view">
 				<Steps current={step}>
 					<Steps.Item />
 					<Steps.Item />
@@ -62,66 +36,63 @@ export default function Home() {
 					<Steps.Item />
 				</Steps>
 				<hr />
-				<Panel header={`Step: ${step + 1}`}>
-					{activeComponent[step]}
-				</Panel>
-				<hr />
+				<p className="txt-dark-black txt-md">Question #{step + 1}</p>
+				<Question question={currentQuestion} />
 				<ButtonGroup>
-					<Button onClick={onPrevious} disabled={step === 0}>
-						Back
-					</Button>
 					<Button onClick={onNext} disabled={step === 9}>
-						Next
+						Skip
 					</Button>
+					{step <= 8 ? (
+						<Button onClick={onNext}>Next</Button>
+					) : (
+						<Button onClick={onNext}>Submit</Button>
+					)}
 				</ButtonGroup>
-			
 			</section>
 		</Layout>
 	);
 }
 
-const App = () => {
-	const [step, setStep] = React.useState(0);
-	const onChange = (nextStep) => {
-		setStep(nextStep < 0 ? 0 : nextStep > 3 ? 3 : nextStep);
+const Question = ({ question }) => {
+	const dispatch = useDispatch();
+	const selectAnswer = (answer) => {
+		setSelectedAnswer(answer);
+		dispatch(
+			updateSelectedAnswer({ selectedAnswer: answer, id: question.id })
+		);
 	};
-
-	const onNext = () => onChange(step + 1);
-	const onPrevious = () => onChange(step - 1);
-
-	const [activeComponent, setActiveComponent] = React.useState([
-		<Rap key={0} />,
-		<HipHop key={1} />,
-		<RnB key={2} />,
-		<Jazz key={3} />
-	]);
-
+	const [selectedAnswer, setSelectedAnswer] = React.useState(undefined);
+	React.useEffect(() => {
+		setSelectedAnswer(undefined);
+	}, [question]);
 	return (
-		<div>
-			<Steps current={step}>
-				<Steps.Item title="Finished" description="Description" />
-				<Steps.Item title="In Progress" description="Description" />
-				<Steps.Item title="Waiting" description="Description" />
-				<Steps.Item title="Waiting" description="Description" />
-			</Steps>
-			<hr />
-			<Panel header={`Step: ${step + 1}`}>{activeComponent[step]}</Panel>
-			<hr />
-			<ButtonGroup>
-				<Button onClick={onPrevious} disabled={step === 0}>
-					Previousk
-				</Button>
-				<Button onClick={onNext} disabled={step === 3}>
-					Next
-				</Button>
-			</ButtonGroup>
-		</div>
+		<>
+			<p
+				className="txt-dark-black txt-md md-btm"
+				dangerouslySetInnerHTML={{ __html: question.currentQuestion }}
+			/>
+			<section className="questionGrid md-btm">
+				{question.answers.map((answer) => (
+					<div
+						className={`question ${
+							selectedAnswer === answer
+								? "purp-bg"
+								: "border-black"
+						}`}
+						key={answer}
+						value={answer}
+						onClick={() => {
+							selectAnswer(answer);
+						}}>
+						<p
+							className="txt-sm"
+							dangerouslySetInnerHTML={{
+								__html: answer
+							}}
+						/>
+					</div>
+				))}
+			</section>
+		</>
 	);
 };
-
-const Rap = ({setName, name}) => <input value={name} onChange={(e) => {setName(e.target.value)}}/>;
-
-const HipHop = ({setName, name}) => <input value={name} onChange={(e) => {setName(e.target.value)}}/>;
-const RnB = () => <p>RnB</p>;
-const Jazz = () => <p>Jazz</p>;
-*/

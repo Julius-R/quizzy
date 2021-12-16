@@ -5,7 +5,7 @@
     font-size: $size
 
 @mixin border_color($color)
-    border-color: $color
+    border: 1px solid $color
     
 .txt-dark-black
     @include font_color($dark-black)
@@ -16,6 +16,8 @@
 
 .border-black
     @include border_color($lite-black)
+.border-purple
+    @include border_color($purple)
 .border-wrong
     @include border_color($red)
 .border-correct
