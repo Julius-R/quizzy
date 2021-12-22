@@ -3,14 +3,22 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { updateSelectedAnswer, addWrong } from "../store/reducers";
 import { Steps, Button, ButtonGroup } from "rsuite";
+import {useRouter} from "next/router";
 
-export default function quiz() {
-	const [questions, setQuestions] = React.useState(
-		useSelector((state) => state.quiz.questions)
-	);
+export default function Quiz() {
+	const dispatch = useDispatch();
+	const questions = useSelector((state) => state.quiz.questions);
 
+	const router = useRouter();
 	// Finish the logic for submitting the quiz
-	const submitQuiz = () => {};
+	const submitQuiz = () => {
+		questions.forEach((question) => {
+			if (question.selectedAnswer !== question.correctAnswer) {
+				dispatch(addWrong(question));
+			}
+		});
+		router.push({ pathname: `results`, query: { quizComplete: true } });
+	};
 
 	const [currentQuestion, setCurrentQuestion] = React.useState(questions[0]);
 	const [step, setStep] = React.useState(0);
@@ -45,7 +53,7 @@ export default function quiz() {
 					{step <= 8 ? (
 						<Button onClick={onNext}>Next</Button>
 					) : (
-						<Button onClick={onNext}>Submit</Button>
+						<Button onClick={submitQuiz}>Submit</Button>
 					)}
 				</ButtonGroup>
 			</section>
@@ -61,9 +69,11 @@ const Question = ({ question }) => {
 			updateSelectedAnswer({ selectedAnswer: answer, id: question.id })
 		);
 	};
-	const [selectedAnswer, setSelectedAnswer] = React.useState(undefined);
+	const [selectedAnswer, setSelectedAnswer] = React.useState(
+		question.selectedAnswer
+	);
 	React.useEffect(() => {
-		setSelectedAnswer(undefined);
+		setSelectedAnswer(question.selectedAnswer);
 	}, [question]);
 	return (
 		<>
