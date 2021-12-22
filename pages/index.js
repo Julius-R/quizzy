@@ -3,7 +3,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch } from "react-redux";
-import { setQuestions, setSessionID } from "../store/reducers";
+import {resetState, setQuestions, setSessionID} from "../store/reducers";
 import { Message, toaster, Form, Loader, SelectPicker } from "rsuite";
 
 export default function Home() {
@@ -81,6 +81,7 @@ export default function Home() {
 		);
 
 	React.useEffect(() => {
+		dispatch(resetState())
 		fetch("https://opentdb.com/api_category.php")
 			.then((res) => res.json())
 			.then((data) => {

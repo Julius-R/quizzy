@@ -23,10 +23,15 @@ const quizSlice = createSlice({
 		},
 		addWrong: (state, action) => {
 			state.wrong.push(action.payload);
+		},
+		resetState: (state) => {
+			state.sessionID = "";
+			state.questions = [];
+			state.wrong = [];
 		}
 	}
 });
 
-export const { setQuestions, setSessionID, updateSelectedAnswer, addWrong } =
+export const { setQuestions, setSessionID, updateSelectedAnswer, addWrong, resetState } =
 	quizSlice.actions;
 export default quizSlice.reducer;

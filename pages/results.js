@@ -1,27 +1,25 @@
 import Layout from "../components/Layout";
+import Question from "../components/Question";
 import React from "react";
 import { useRouter } from "next/router";
-import { v4 as uuidv4 } from "uuid";
-import {useDispatch, useSelector} from "react-redux";
-import {setQuestions, setSessionID, updateSelectedAnswer} from "../store/reducers";
-import {Message, toaster, Form, Loader, SelectPicker, ButtonGroup, Button} from "rsuite";
+import {useSelector} from "react-redux";
+import { ButtonGroup, Button} from "rsuite";
 
 export default function Home() {
-    const dispatch = useDispatch();
     const router = useRouter();
     const [step, setStep] = React.useState(0);
-    const onChange = (nextStep) => {
-        setStep(nextStep < 0 ? 0 : nextStep > 9 ? 0 : nextStep);
-    };
-    const onNext = () => onChange(step + 1);
-    const onPrev = () => onChange(step - 1);
+    const onNext = () => setStep(step + 1);
+    const onPrev = () => setStep(step - 1);
 
 
     const wrongAnswers = useSelector(state => state.quiz.wrong)
+    const returnHome = () => {
+
+        router.push({ pathname: `/`});
+    }
     const displayResultsMessage = score => {
         let numberRight = 10 - score;
         let total = `${numberRight} out of 10 questions correct.`;
-        console.log(numberRight);
         switch(true) {
             case 0:
                 return `Yikes, you missed all the questions... You should try again.`;
@@ -49,22 +47,15 @@ export default function Home() {
     return (
         <Layout>
             <section className="quiz-view">
-                <p className="txt-center txt-dark-black txt-lg">
-                    Results
-                </p>
-                <p className="txt-center txt-dark-black txt-md md-btm">
-                    {displayResultsMessage(0)}
-                </p>
+                <p className="txt-center txt-dark-black txt-lg">Results</p>
+                <p className="txt-center txt-dark-black txt-md md-btm">{displayResultsMessage(wrongAnswers.length)}</p>
                 <hr />
                 <p className="txt-dark-black txt-md">Correct Answers:</p>
-                <Question question={wrongAnswers[step]} arrLength={wrongAnswers.length}/>
+                <Question question={wrongAnswers[step]} isResult={true}/>
                 <ButtonGroup>
-                    <Button onClick={onPrev} disabled={step === wrongAnswers.length}>
-                        Prev
-                    </Button>
-                        <Button onClick={onNext} disabled={step === wrongAnswers.length}>Next</Button>
-                    <Button onClick={onNext} disabled={step === wrongAnswers.length}>Try a new quiz</Button>
-
+                    <Button onClick={onPrev} disabled={step === 0}>Prev</Button>
+                    <Button onClick={onNext} disabled={step === wrongAnswers.length - 1}>Next</Button>
+                    <Button onClick={returnHome}>Try a new quiz</Button>
                 </ButtonGroup>
 
             </section>
@@ -72,55 +63,14 @@ export default function Home() {
     );
 }
 
-const Question = ({ question, arrLength }) => {
-    const dispatch = useDispatch();
-    const selectAnswer = (answer) => {
-        setSelectedAnswer(answer);
-        dispatch(
-            updateSelectedAnswer({ selectedAnswer: answer, id: question.id })
-        );
-    };
-    const [selectedAnswer, setSelectedAnswer] = React.useState(
-        question.selectedAnswer
-    );
-    const highlightChoice = answer => {
-        switch(answer) {
-            case question.selectedAnswer:
-                return "border-wrong";
-            case question.correctAnswer:
-                return "border-correct";
-            default:
-                return "border-black";
-        }
+export async function getServerSideProps(ctx) {
+    if (ctx.query.quizComplete === false) {
+        return {
+            redirect: {
+                destination: "/",
+                permanent: false
+            }
+        };
     }
-    React.useEffect(() => {
-        setSelectedAnswer(question.selectedAnswer);
-    }, [question]);
-    return (
-        <>
-            <p
-                className="txt-dark-black txt-md md-btm"
-                dangerouslySetInnerHTML={{ __html: question.currentQuestion }}
-            />
-            {arrLength}
-            <section className="questionGrid md-btm">
-                {question.answers.map((answer) => (
-                    <div
-                        className={`question ${highlightChoice(answer)}`}
-                        key={answer}
-                        value={answer}
-                        onClick={() => {
-                            selectAnswer(answer);
-                        }}>
-                        <p
-                            className="txt-sm"
-                            dangerouslySetInnerHTML={{
-                                __html: answer
-                            }}
-                        />
-                    </div>
-                ))}
-            </section>
-        </>
-    );
-};
+    return { props: {} };
+}

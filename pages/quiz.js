@@ -1,7 +1,8 @@
 import Layout from "../components/Layout";
+import Question from "../components/Question";
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { updateSelectedAnswer, addWrong } from "../store/reducers";
+import {  addWrong } from "../store/reducers";
 import { Steps, Button, ButtonGroup } from "rsuite";
 import {useRouter} from "next/router";
 
@@ -10,7 +11,6 @@ export default function Quiz() {
 	const questions = useSelector((state) => state.quiz.questions);
 
 	const router = useRouter();
-	// Finish the logic for submitting the quiz
 	const submitQuiz = () => {
 		questions.forEach((question) => {
 			if (question.selectedAnswer !== question.correctAnswer) {
@@ -61,48 +61,14 @@ export default function Quiz() {
 	);
 }
 
-const Question = ({ question }) => {
-	const dispatch = useDispatch();
-	const selectAnswer = (answer) => {
-		setSelectedAnswer(answer);
-		dispatch(
-			updateSelectedAnswer({ selectedAnswer: answer, id: question.id })
-		);
-	};
-	const [selectedAnswer, setSelectedAnswer] = React.useState(
-		question.selectedAnswer
-	);
-	React.useEffect(() => {
-		setSelectedAnswer(question.selectedAnswer);
-	}, [question]);
-	return (
-		<>
-			<p
-				className="txt-dark-black txt-md md-btm"
-				dangerouslySetInnerHTML={{ __html: question.currentQuestion }}
-			/>
-			<section className="questionGrid md-btm">
-				{question.answers.map((answer) => (
-					<div
-						className={`question ${
-							selectedAnswer === answer
-								? "purp-bg"
-								: "border-black"
-						}`}
-						key={answer}
-						value={answer}
-						onClick={() => {
-							selectAnswer(answer);
-						}}>
-						<p
-							className="txt-sm"
-							dangerouslySetInnerHTML={{
-								__html: answer
-							}}
-						/>
-					</div>
-				))}
-			</section>
-		</>
-	);
-};
+export async function getServerSideProps(ctx) {
+	if (ctx.query.id === undefined) {
+		return {
+			redirect: {
+				destination: "/",
+				permanent: false
+			}
+		};
+	}
+	return { props: {} };
+}
