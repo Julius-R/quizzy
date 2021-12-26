@@ -1,0 +1,23 @@
+
+@media screen and (max-width: 720px)
+  .branding
+    padding: 1rem
+  .main
+    transform: translate(0%, 0%)
+    padding: 0
+    .home-view
+      padding: 1rem
+    .quiz-view
+      padding: 1rem
+      .count, hr
+        display: none
+      .questionGrid
+        .question
+          width: 100%
+
+  .txt-sm
+    @include font_size(.8rem)
+  .txt-md
+    @include font_size(1.25rem)
+  .txt-lg
+    @include font_size(1.6rem)
