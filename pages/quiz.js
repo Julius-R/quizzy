@@ -31,7 +31,7 @@ export default function Quiz() {
 	return (
 		<Layout>
 			<section className="quiz-view">
-				<Steps current={step}>
+				<Steps current={step} className="count">
 					<Steps.Item />
 					<Steps.Item />
 					<Steps.Item />

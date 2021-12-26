@@ -36,15 +36,7 @@ export default function Home() {
         }
     }
 
-    /* TODO
-    *
-    *
-    * Give option to take new quiz
-    * Reset appropriate fields to achieve this
-    *
-    * */
-
-    return (
+     return (
         <Layout>
             <section className="quiz-view">
                 <p className="txt-center txt-dark-black txt-lg">Results</p>
