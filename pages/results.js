@@ -36,7 +36,7 @@ export default function Home() {
         <Layout>
             <section className="results mt-pad">
                 <div className="container">
-                    <div className="results">
+                    <div className="results-area">
                         <p className="txt-center txt-lg">Results</p>
                         <p className="txt-center txt-md md-btm">{displayResultsMessage(wrongAnswers.length)}</p>
                     </div>
