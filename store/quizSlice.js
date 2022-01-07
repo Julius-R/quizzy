@@ -3,14 +3,10 @@ import { createSlice } from "@reduxjs/toolkit";
 const quizSlice = createSlice({
 	name: "quiz",
 	initialState: {
-		sessionID: "",
 		questions: [],
 		wrong: []
 	},
 	reducers: {
-		setSessionID(state, action) {
-			state.sessionID = action.payload;
-		},
 		setQuestions(state, action) {
 			state.questions = action.payload;
 		},
@@ -25,13 +21,12 @@ const quizSlice = createSlice({
 			state.wrong.push(action.payload);
 		},
 		resetState: (state) => {
-			state.sessionID = "";
 			state.questions = [];
 			state.wrong = [];
 		}
 	}
 });
 
-export const { setQuestions, setSessionID, updateSelectedAnswer, addWrong, resetState } =
+export const { setQuestions, updateSelectedAnswer, addWrong, resetState } =
 	quizSlice.actions;
 export default quizSlice.reducer;

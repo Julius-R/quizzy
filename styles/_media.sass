@@ -1,23 +1,18 @@
+@media screen and (min-width: 767px)
+  .container
+    padding: 0 3rem
 
-@media screen and (max-width: 720px)
-  .branding
-    padding: 1rem
-  .main
-    transform: translate(0%, 0%)
-    padding: 0
-    .home-view
-      padding: 1rem
-    .quiz-view
-      padding: 1rem
-      .count, hr
-        display: none
-      .questionGrid
-        .question
-          width: 100%
+  .mt-pad
+    margin-top: 6rem
 
-  .txt-sm
-    @include font_size(.8rem)
-  .txt-md
-    @include font_size(1.25rem)
-  .txt-lg
-    @include font_size(1.6rem)
+  header
+    padding: 2rem 0 0
+
+  .quiz
+    .container
+      .answers
+        grid-template-columns: repeat(2,  1fr)
+
+@media screen and (min-width: 1023px)
+  .container
+    padding: 0 10rem

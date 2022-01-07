@@ -1,4 +1,4 @@
-import "rsuite/dist/rsuite.min.css";
+
 import "../styles/styles.sass";
 import { Provider } from "react-redux";
 import store from "../store/store.js";

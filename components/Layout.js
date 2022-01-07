@@ -11,14 +11,16 @@ export default function Layout({ children }) {
 					content="A quiz app I built with Next.js"
 				/>
 			</Head>
-
-					<header className="branding">
-							<Link href={"/"}>
-								<a className="txt-purple txt-lg">Quizzy</a>
-							</Link>
-
-					</header>
-					<main className="main">{children}</main>
+			<header>
+				<div className="container">
+					<Link href={"/"}>
+						<a className="txt-purple txt-lg">Quizzy</a>
+					</Link>
+				</div>
+			</header>
+			<main>
+				{children}
+			</main>
 		</>
 	);
 }
