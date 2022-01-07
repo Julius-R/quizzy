@@ -1,45 +1,51 @@
+import React, {useState, useEffect} from "react";
 import Layout from "../components/Layout";
-import React from "react";
 import { useRouter } from "next/router";
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch } from "react-redux";
-import {resetState, setQuestions, setSessionID} from "../store/reducers";
-import { Message, toaster, Form, Loader, SelectPicker } from "rsuite";
+import {setQuestions} from "../store/quizSlice";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Select from 'react-select'
+
+
 
 export default function Home() {
+	const [isLoading, setLoading] = React.useState(false);
+	const [params, setParams] = useState({
+		difficulty: "easy",
+		category: 9,
+		quizType: "multiple"
+	});
+	const updateParam = (param, value) => setParams(prevState => ({...prevState, [param]: value}))
+	let fields = {
+		quizTypes:  [
+			{ label: "Multiple Choice", value: "multiple" },
+			{ label: "True or False", value: "boolean" }
+		],
+		difficulties: [
+			{ label: "Easy", value: "easy" },
+			{ label: "Medium", value: "medium" },
+			{ label: "Hard", value: "hard" }
+		],
+		categories: []
+	}
 	const dispatch = useDispatch();
 	const router = useRouter();
-	const [category, setCategory] = React.useState(9);
-	const [quizType, setType] = React.useState("multiple");
-	const [difficulty, setDifficulty] = React.useState("easy");
-	const [isLoading, setLoading] = React.useState(false);
-
-	const quizTypes = [
-		{
-			label: "Multiple Choice",
-			value: "multiple"
-		},
-		{
-			label: "True or False",
-			value: "boolean"
-		}
-	];
-	const difficulties = [
-		{ label: "Easy", value: "easy" },
-		{ label: "Medium", value: "medium" },
-		{ label: "Hard", value: "hard" }
-	];
-	const [categories, setCategories] = React.useState([]);
-
+	const errorDisplay = (msg) => toast.error(msg, {
+		position: "top-right",
+		autoClose: 5000,
+		hideProgressBar: false,
+		closeOnClick: true,
+		pauseOnHover: false,
+		progress: undefined,
+	});
 	const generate_quiz = async () => {
-		setLoading(true);
-		const res = await fetch(
-			`https://opentdb.com/api.php?amount=10&category=${category}&difficulty=${difficulty}&type=${quizType}`
-		);
+		await setLoading(true);
+		const res = await fetch(`https://opentdb.com/api.php?amount=10&category=${params.category}&difficulty=${params.difficulty}&type=${params.quizType}`);
 		const data = await res.json();
 		if (data.response_code === 0) {
 			let curatedList = [];
-			let sessionID = uuidv4();
 			for (const question of data.results) {
 				let q = {
 					id: uuidv4(),
@@ -55,107 +61,64 @@ export default function Home() {
 				curatedList.push(q);
 			}
 			dispatch(setQuestions(curatedList));
-			dispatch(setSessionID(sessionID));
-			router.push({ pathname: `quiz`, query: { id: sessionID } });
+			await router.push({ pathname: `quiz`, query: { sessionID: uuidv4() } });
 		} else {
-			setLoading(false);
+			await setLoading(false);
 			errorDisplay(
-				"Hmm, looks like there isn't enough questions for your quiz. Try a different category or difficulty."
+				"Hmm, looks like there isn't enough questions for your quiz."
 			);
 		}
 	};
 
-	const errorDisplay = (msg) =>
-		toaster.push(
-			<Message
-				duration={0}
-				showIcon
-				type="error"
-				header="An Error Has Occurred"
-				closable>
-				{msg}
-			</Message>,
-			{
-				placement: "topEnd"
-			}
-		);
-
-	React.useEffect(() => {
-		dispatch(resetState())
+	useEffect(() => {
 		fetch("https://opentdb.com/api_category.php")
 			.then((res) => res.json())
 			.then((data) => {
-				let cats = [];
 				data.trivia_categories.forEach((t) => {
-					cats.push({
+					fields.categories.push({
 						label: t.name,
 						value: t.id
 					});
 				});
-				setCategories(cats);
+
 			})
 			.catch((err) => errorDisplay(err.message));
-	}, []);
+	});
 
 	return (
 		<Layout>
-			<section className="home-view">
-				<p className="txt-center txt-dark-black txt-lg">
-					Welcome to <span className="txt-purple">Quizzy</span>!
-				</p>
-				<p className="txt-center txt-dark-black txt-md md-btm">
-					Choose from one of our 20+ categories and get your quiz on!
-				</p>
+			<section className="home mt-pad">
+				<div className="container">
+					<p className="txt-center md-btm txt-lg">
+						Welcome to Quizzy!
+					</p>
+					<p className="txt-center txt-md md-btm">
+						Choose from one of our 20+ categories and get your quiz on!
+					</p>
 
-				<Form fluid>
-					<Form.Group controlId="Categories">
-						<Form.ControlLabel className="txt-sm">
-							Categories:
-						</Form.ControlLabel>
-						<Form.Control
-							onChange={(val) => setCategory(val)}
-							block
-							name="Categories"
-							accepter={SelectPicker}
-							data={categories}
-							placeholder="Categories"
-						/>
-					</Form.Group>
-					<Form.Group controlId="Quiz Type">
-						<Form.ControlLabel className="txt-sm">
-							Quiz Type:
-						</Form.ControlLabel>
-						<Form.Control
-							onChange={(val) => setType(val)}
-							block
-							name="Quiz Type"
-							accepter={SelectPicker}
-							data={quizTypes}
-							placeholder="Quiz Type"
-						/>
-					</Form.Group>
-					<Form.Group controlId="Difficulty">
-						<Form.ControlLabel className="txt-sm">
-							Difficulty:
-						</Form.ControlLabel>
-						<Form.Control
-							onChange={(val) => setDifficulty(val)}
-							block
-							name="Difficulty"
-							accepter={SelectPicker}
-							data={difficulties}
-							placeholder="Difficulty"
-						/>
-					</Form.Group>
-					<button className="purp-bg" onClick={() => generate_quiz()}>
+					<div className="selector">
+						<label className="txt-md">Select a Difficulty</label>
+						<Select className={'txt-blk'} options={fields.difficulties} onChange={(e) => updateParam("difficulty", e.value)} />
+					</div>
+					<div className="selector">
+						<label className="txt-md">Select a Quiz Type</label>
+						<Select className={'txt-blk'} options={fields.quizTypes} onChange={(e) => updateParam("quizType", e.value)} />
+					</div>
+					<div className="selector">
+						<label className="txt-md">Select a Category</label>
+						<Select className={'txt-blk'} options={fields.categories} onChange={(e) => updateParam("category", e.value)} />
+					</div>
+					<button className="blu-bg" onClick={() => generate_quiz()}>
 						{isLoading ? (
-							<Loader content="Generating Quiz..." />
+							"Generating Quiz..."
 						) : (
 							"Generate Quiz"
 						)}
 					</button>
-				</Form>
+
+				</div>
 			</section>
+			<ToastContainer />
 		</Layout>
 	);
 }

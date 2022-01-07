@@ -1,16 +1,14 @@
+import React from "react";
 import Layout from "../components/Layout";
 import Question from "../components/Question";
-import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {  addWrong } from "../store/reducers";
-import { Steps, Button, ButtonGroup } from "rsuite";
+import { addWrong } from "../store/quizSlice";
 import {useRouter} from "next/router";
 
 export default function Quiz() {
 	const dispatch = useDispatch();
-	const questions = useSelector((state) => state.quiz.questions);
-
 	const router = useRouter();
+	const questions = useSelector((state) => state.quiz.questions);
 	const submitQuiz = () => {
 		questions.forEach((question) => {
 			if (question.selectedAnswer !== question.correctAnswer) {
@@ -19,50 +17,25 @@ export default function Quiz() {
 		});
 		router.push({ pathname: `results`, query: { quizComplete: true } });
 	};
-
-	const [currentQuestion, setCurrentQuestion] = React.useState(questions[0]);
 	const [step, setStep] = React.useState(0);
-	const onChange = (nextStep) => {
-		setCurrentQuestion(questions[nextStep]);
-		setStep(nextStep < 0 ? 0 : nextStep > 9 ? 0 : nextStep);
-	};
-	const onNext = () => onChange(step + 1);
-
 	return (
 		<Layout>
-			<section className="quiz-view">
-				<Steps current={step} className="count">
-					<Steps.Item />
-					<Steps.Item />
-					<Steps.Item />
-					<Steps.Item />
-					<Steps.Item />
-					<Steps.Item />
-					<Steps.Item />
-					<Steps.Item />
-					<Steps.Item />
-					<Steps.Item />
-				</Steps>
-				<hr />
-				<p className="txt-dark-black txt-md">Question #{step + 1}</p>
-				<Question question={currentQuestion} />
-				<ButtonGroup>
-					<Button onClick={onNext} disabled={step === 9}>
-						Skip
-					</Button>
+			<section className="quiz">
+				<div className="container">
+					<Question currentStep={step} question={questions[step]} />
 					{step <= 8 ? (
-						<Button onClick={onNext}>Next</Button>
+						<button className="blu-bg" onClick={() => setStep(step + 1)}>Next</button>
 					) : (
-						<Button onClick={submitQuiz}>Submit</Button>
+						<button className="blu-bg" onClick={submitQuiz}>Submit</button>
 					)}
-				</ButtonGroup>
+				</div>
 			</section>
 		</Layout>
 	);
 }
 
 export async function getServerSideProps(ctx) {
-	if (ctx.query.id === undefined) {
+	if (ctx.query.sessionID === undefined) {
 		return {
 			redirect: {
 				destination: "/",
